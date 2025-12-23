@@ -1,0 +1,88 @@
+name: blue_lab_waf
+
+services:
+  waf:
+    build:
+      context: ./waf
+    container_name: waf
+    environment:
+      - BACKEND=http://172.21.0.10
+      # 關鍵：直接用變數控制模式
+      #- MODSEC_RULE_ENGINE=DetectionOnly #階段一：無防護、 階段二：應用層過濾
+      - MODSEC_RULE_ENGINE=On #階段三：WAF 防護 (最強防線)
+    networks:
+      wan:
+        ipv4_address: 172.20.0.254
+      lan:
+        ipv4_address: 172.21.0.254
+
+  server:
+    build: ./server
+    container_name: server
+    networks:
+      lan:
+        ipv4_address: 172.21.0.10
+    depends_on:
+      - waf
+    restart: unless-stopped
+
+  client1:
+    build: ./client
+    container_name: client1
+    networks:
+      wan:
+        ipv4_address: 172.20.0.10
+    depends_on:
+      - waf
+    command: >
+      sh -c "
+        ip route del default 2>/dev/null || true;
+        ip route add default via 172.20.0.254;
+        tail -f /dev/null
+      "
+    restart: unless-stopped
+
+  client2:
+    build: ./client
+    container_name: client2
+    networks:
+      wan:
+        ipv4_address: 172.20.0.11
+    depends_on:
+      - waf
+    command: >
+      sh -c "
+        ip route del default 2>/dev/null || true;
+        ip route add default via 172.20.0.254;
+        tail -f /dev/null
+      "
+    restart: unless-stopped
+
+  client3:
+    build: ./client
+    container_name: client3
+    networks:
+      wan:
+        ipv4_address: 172.20.0.12
+    depends_on:
+      - waf
+    command: >
+      sh -c "
+        ip route del default 2>/dev/null || true;
+        ip route add default via 172.20.0.254;
+        tail -f /dev/null
+      "
+    restart: unless-stopped
+
+networks:
+  wan:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+
+  lan:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/24
