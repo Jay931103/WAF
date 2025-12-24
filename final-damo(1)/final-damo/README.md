@@ -4,7 +4,7 @@
 
 ## 🚀 實驗三階段實作指引
 
-    啟動Docker
+啟動Docker
     ```bash
     docker compose up -d --build
     ```
@@ -82,3 +82,4 @@
 * **重看 Server 流量紀錄:**
   ```cmd
   docker logs server
+
