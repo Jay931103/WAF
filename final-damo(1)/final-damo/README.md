@@ -4,11 +4,8 @@
 
 ## 🚀 實驗三階段實作指引
 
-**啟動Docker:**
- ```bash
- docker compose up -d --build
- ```
-    
+**啟動Docker:** `docker compose up -d --build`
+
 ### 🔹 階段一：無防護狀態 (DetectionOnly)
 **情境：** WAF 僅作為監視器，不進行攔截；後端程式碼無任何過濾邏輯。
 * **準備工作：** - `compose.yaml` 設定 `MODSEC_RULE_ENGINE=DetectionOnly`
@@ -83,5 +80,6 @@
 * **重看 Server 流量紀錄:**
   ```cmd
   docker logs server
+
 
 
